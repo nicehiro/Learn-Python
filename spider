@@ -1,0 +1,11 @@
+urllib2
+urlopen(url, data, timeout)
+先构造 request，将request 传入 urlopen
+
+
+https://tieba.baidu.com/p/3138733512?see_lz=1&pn=1
+http:// 传输协议
+tieba.baidu.com: 二级域名
+p/3138733512: 服务器某个资源
+see_lz=1: 只看楼主
+pn=1: 页数 1
