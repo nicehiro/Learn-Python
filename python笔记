@@ -1,0 +1,184 @@
+decimal 科学计算
+
+常用库：math
+math.factorial(x)   阶乘
+dir(math)           math 库的函数
+help(math)          math 库的函数用法
+
+字符串
+切片　索引
+
+split:以什么分割；默认为空格分割
+join:以什么合并
+strip:去除空格
+
+upper find replace
+
+转义:r''
+
+coding:utf8 正常显示中文
+
+re　模块　正则表达式
+match(p, text)
+search(p, text)
+
+findall(p, text)　找到所有
+split(p, text)　分割
+sub(p, s, text) 替换
+
+11 个元字符：,
+
+datetime
+
+strptime(''):将字符串转时间
+
+time库
+
+time        clock
+
+列表：[]      拷贝:a_copy = a[:]
+a.insert(1, 50)
+a.pop()
+a.sort()
+del a[1]
+count
+
+引用：L=[4,5,6], Y=[L]*4, L[1]=0, Y 也会发生改变
+
+元组：() 只能访问　不能操作
+tuple()     list 转换为元组
+
+字典：{}   key-value
+dict(元组list)
+dict(xiaoli=33, xiaoming=22)
+zip:两个list合并成一个{}
+update()    增加
+del()
+
+引用，浅拷贝，深拷贝
+
+文件
+F = open(path, 'r')
+F.read()
+F.readline()
+中文支持　import codecs
+f = codecs.open(filename, mode, encoding)
+操作      import os
+os.path.exit(filename)
+os.rename(old, new)
+Shelve库
+d=Shelve.open(file) 拿出到字典
+
+Pickle/cPickle 库
+import cPickle
+f=open(file, mode)
+cPickle.dump(obj, f)    存
+obj = cPickle.load(f)   读
+
+csv 库 可以直接打开cvs 文件
+
+赋值
+多重赋值：
+a,*b = "beijing "
+a,b = "bj"
+a,b = "bj", "sh"
+
+输入：
+raw_input("")：输入的字符串
+input("")：输入字符的计算结果
+
+输出：
+3.x: print():
+2.x: print
+print '%s %s %c'%(a,b,c)
+print '{0} like {1}'.format('we', python)
+print '{a} like {b}',format('we', python)
+
+列表解析:
+[l2.append(i) for i in l1 if not i in l2]
+
+异常处理：
+try/except:
+try/finally:
+raise error(message):
+Assert condition, message: condition is false, throw message
+
+参数：
+def(a, *args, **kwargs)
+*args: 一维数组，元组类型
+*kwargs: 二维数组，字典类型
+
+高阶函数：def(f, a, b)
+
+filter　
+
+map
+
+reduce
+
+lambda
+
+闭包：绑定外部变量的函数
+－　嵌套函数
+－　内部函数引用外部函数
+－　外部函数返回内部函数
+
+装饰器：
+- 编译时就运行装饰器函数
+        可以通过多加一层装饰器让它返回一个函数就可以不直接运行了
+- 被装饰函数不能加入参数
+        可以再多加一层装饰器让它
+
+迭代器和生成器：
+
+itertools
+permutations
+product
+chain
+repeat
+
+__slots__: 限制属性添加
+
+__dict__:
+
+__class__.__dict__:
+
+__init__:实例化自动调用
+
+实例变量
+类变量
+私有变量
+
+可以动态改变实例变量：
+__getattr__:
+__setattr__:
+__delattr__:
+
+__repr__:
+__contains__:
+
+
+15234817260
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+over
