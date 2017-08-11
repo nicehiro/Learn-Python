@@ -6,12 +6,12 @@
 # 使用 requests 库
 
 
-import requests
 import re
 import urllib.robotparser
 from urllib import parse
 import datetime
 import time
+from downloader import Downloader
 
 
 class Throttle:
@@ -38,7 +38,8 @@ class Throttle:
 
 
 # 从 Chrome 请求中复制的一段请求头，用来模拟浏览器请求
-user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36'
+user_agent = ('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
+              '(KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36')
 
 
 '''
@@ -51,14 +52,18 @@ proxies = {
 
 
 # 实现下载功能
+'''
 def download(url, agent=user_agent, proxy=None):
     print('Downloading: ', url)
     html = requests.get(url, proxies=proxy, timeout=5)
     print(html.status_code)
     return html
+'''
 
 
-def link_crawler(seed_url, link_regex=None, headers=None, user_agent=user_agent, max_depth=2, delay=0, max_urls=-1):
+def link_crawler(seed_url, link_regex=None, headers=None,
+                 user_agent=user_agent, max_depth=2, delay=0, max_urls=-1,
+                 scrape_callback=None, cache=None):
 
     # 存放需要访问的 url
     crawl_queue = [seed_url]
@@ -70,7 +75,8 @@ def link_crawler(seed_url, link_regex=None, headers=None, user_agent=user_agent,
     rp = get_robots(seed_url)
 
     # 延迟
-    throttle = Throttle(delay)
+    # throttle = Throttle(delay)
+    D = Downloader(cache=cache)
 
     # 统计访问 url 次数
     num_urls = 0
@@ -82,9 +88,12 @@ def link_crawler(seed_url, link_regex=None, headers=None, user_agent=user_agent,
     while crawl_queue:
         url = crawl_queue.pop()
         if rp.can_fetch(user_agent, url):
-            throttle.wait(url)
-            html = download(url, proxy=proxies)
+            # throttle.wait(url)
+            html = D(url)
             links = []
+
+            if scrape_callback:
+                links.extend(scrape_callback(url, html) or [])
 
             depth = seen[url]
             if depth != max_depth:
@@ -126,7 +135,7 @@ def get_links(html):
     这里直接匹配页面中所有的 url
     '''
     is_link_regex = re.compile('<a[^>]+href=["\'](.*?)["\']')
-    return is_link_regex.findall(html.text)
+    return is_link_regex.findall(html)
 
 
 def print_url(url_list):
@@ -151,5 +160,5 @@ if __name__ == '__main__':
 
     link_regex = '.*/(index|view)/.*'
     # link_crawler(url, link_regex)
-    link_crawler(netflix, link_regex,
+    link_crawler(url, link_regex,
                  delay=0, user_agent='BadCrawler', max_urls=10)
