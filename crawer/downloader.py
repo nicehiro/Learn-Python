@@ -11,7 +11,8 @@ import datetime
 from urllib import parse
 import socket
 
-DEFAULT_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36'
+DEFAULT_AGENT = ('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
+                 '(KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36')
 DEFAULT_DELAY = 5
 DEFAULT_RETRIES = 1
 DEFAULT_TIMEOUT = 60
@@ -65,9 +66,10 @@ class Downloader:
         self.cache = cache
 
     def download(self, url, headers, proxy, num_retries):
+        print('Downloading......................')
         request = requests.get(url, headers or {}, proxies=proxy)
         print(request.status_code)
-        return {'html': request.text, 'code': request.status_code}
+        return {'html': request, 'code': request.status_code}
 
     def __call__(self, url):
         print('call back........................')

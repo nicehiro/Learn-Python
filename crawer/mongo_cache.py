@@ -54,5 +54,8 @@ class MongoCache:
 
 
 if __name__ == '__main__':
-    link_crawler('http://example.webscraping.com', '.*/(index|view)/.*',
-                 delay=0, max_urls=10, cache=MongoCache())
+    url = 'http://s3.amazonaws.com/alexa-static/top-1m.csv.zip'
+    url2 = 'http://example.webscraping.com'
+    link_crawler(url2,
+                 delay=0, max_urls=10, cache=MongoCache(), ignore_robot=True)
+    # MongoCache().clear()

@@ -8,6 +8,7 @@ from stronger_crawer import link_crawler
 
 class ScrapeCallback:
     def __init__(self):
+        self.seed_url = 'http://example.webscraping.com'
         self.writer = csv.writer(open('countries.csv', 'w'))
         self.fields = ('area', 'population', 'iso', 'country', 'capital',
                        'continent',
@@ -15,6 +16,15 @@ class ScrapeCallback:
                        'postal_code_format', 'postal_code_regex',
                        'languages', 'neighbours')
         self.writer.writerow(self.fields)
+
+    def get_links(self, html):
+        href_link_regex = re.compile('<a[^>]+href=["\'](.*?)["\']')
+        return href_link_regex.findall(html.text)
+
+    def handler(self, link_regex, all_links):
+        links = []
+        links.extend(link for link in all_links if re.match(link_regex, link))
+        return links
 
     def __call__(self, url, html):
         if re.search('/view/', url):
@@ -26,6 +36,10 @@ class ScrapeCallback:
                     .format(field))[0].text
                 row.append(text)
             self.writer.writerow(row)
+
+        link_regex = '.*/(index|view)/.*'
+        all_links = self.get_links(html)
+        return self.handler(link_regex, all_links)
 
 
 if __name__ == '__main__':

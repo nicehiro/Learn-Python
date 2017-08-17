@@ -51,19 +51,9 @@ proxies = {
 }
 
 
-# 实现下载功能
-'''
-def download(url, agent=user_agent, proxy=None):
-    print('Downloading: ', url)
-    html = requests.get(url, proxies=proxy, timeout=5)
-    print(html.status_code)
-    return html
-'''
-
-
 def link_crawler(seed_url, link_regex=None, headers=None,
                  user_agent=user_agent, max_depth=2, delay=0, max_urls=-1,
-                 scrape_callback=None, cache=None):
+                 scrape_callback=None, cache=None, ignore_robot=False):
 
     # 存放需要访问的 url
     crawl_queue = [seed_url]
@@ -72,7 +62,10 @@ def link_crawler(seed_url, link_regex=None, headers=None,
     seen = {seed_url: 0}
 
     # 识别 robots.txt
-    rp = get_robots(seed_url)
+    if ignore_robot:
+        rp = None
+    else:
+        rp = get_robots(seed_url)
 
     # 延迟
     # throttle = Throttle(delay)
@@ -87,7 +80,9 @@ def link_crawler(seed_url, link_regex=None, headers=None,
 
     while crawl_queue:
         url = crawl_queue.pop()
-        if rp.can_fetch(user_agent, url):
+        print(url)
+        if ignore_robot or rp.can_fetch(user_agent, url):
+            print(ignore_robot)
             # throttle.wait(url)
             html = D(url)
             links = []
@@ -107,6 +102,9 @@ def link_crawler(seed_url, link_regex=None, headers=None,
                             print(link)
                             if same_domain(seed_url, link):
                                 crawl_queue.append(link)
+                else:
+                    crawl_queue.extend(links)
+
             num_urls += 1
             if num_urls == max_urls:
                 break
@@ -135,7 +133,7 @@ def get_links(html):
     这里直接匹配页面中所有的 url
     '''
     is_link_regex = re.compile('<a[^>]+href=["\'](.*?)["\']')
-    return is_link_regex.findall(html)
+    return is_link_regex.findall(html.text)
 
 
 def print_url(url_list):
@@ -158,7 +156,8 @@ if __name__ == '__main__':
     url = 'http://example.webscraping.com'
     netflix = 'https://www.netflix.com/'
 
+    url2 = 'http://www.baidu.com'
     link_regex = '.*/(index|view)/.*'
     # link_crawler(url, link_regex)
-    link_crawler(url, link_regex,
+    link_crawler(url,
                  delay=0, user_agent='BadCrawler', max_urls=10)
