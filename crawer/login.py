@@ -139,10 +139,10 @@ if __name__ == '__main__':
     login_email = '2436678006@qq.com'
     login_passwd = 'w1234567'
     # print('login_with_urllib...................')
-    print(login_with_urllib(url, login_email, login_passwd))
+    # print(login_with_urllib(url, login_email, login_passwd))
     # print('login_with_requests.................')
     # print(login_with_requests(url, login_email, login_passwd))
-    # build_opener_with_chrome_cookies('.baidu.com')
+    build_opener_with_chrome_cookies('.baidu.com')
 
-    url2 = 'http://example.webscraping.com/places/default/edit/Algeria-4'
-    login_with_requests(url2, login_email, login_passwd)
+    # url2 = 'http://example.webscraping.com/places/default/edit/Algeria-4'
+    # login_with_requests(url2, login_email, login_passwd)
