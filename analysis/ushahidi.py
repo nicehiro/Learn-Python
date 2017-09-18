@@ -11,6 +11,7 @@ import matplotlib.pylab as plt
 
 
 def to_cat_list(catstr):
+    # 返回一个list，内容是一堆类型
     # (... for .. in ..) 可以生成一个 generator，iterable 对象
     stripped = (x.strip() for x in catstr.split(','))
     return [x for x in stripped if x]
@@ -55,15 +56,27 @@ def test(path=None):
     data = data[(data.LATITUDE > 18) & (data.LATITUDE < 20) &
                 (data.LONGITUDE > -75) & (data.LONGITUDE < -70) &
                 data.CATEGORY.notnull()]
+
+    # 得到所有分类
     all_cats = get_all_categories(data.CATEGORY)
 
+    # 将分类编号和分类信息组成 dict
     english_mapping = dict(get_english(x) for x in all_cats)
 
+    # 或得所有分类 code
     all_codes = get_code(all_cats)
+
+    # 得到一个 index 对象，使用分类的编号
     code_index = pd.Index(np.unique(all_codes))
+
+    # index 是原来 data 的 index
+    # columns 是分类的编号
     dummy_frame = DataFrame(np.zeros((len(data), len(code_index))),
                             index=data.index, columns=code_index)
 
+    # row: index
+    # cat: category
+    # 每条记录中有那个分类就置 1
     for row, cat in zip(data.index, data.CATEGORY):
         codes = get_code(to_cat_list(cat))
         dummy_frame.ix[row, codes] = 1
