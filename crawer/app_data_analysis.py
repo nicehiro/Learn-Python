@@ -41,6 +41,8 @@ class data_analysis():
         self.sign_in_home_id = '2724'
         self.sign_in_class_id = '2663'
         self.login()
+        self.verify_cmd = 'write_verify'
+        self.submit_cmd = 'submit_w_report'
         print('Login Success!')
         
 
@@ -88,18 +90,30 @@ class data_analysis():
         response2 = self.da_session.post(self.host+'?'+param2)
         return response2.json()['sessionid']
 
-    def commit(self, sign_sessionid):
-        param = ('__device__={}&__mobileapp__=true&cmd=write_verify&'
+    def commit(self, cmd, sign_sessionid):
+        param = ('__device__={}&__mobileapp__=true&cmd={}&'
                  'isMobile=yes&op=fr_write&reportXML=%3C%3Fxml+version%3D'
                  '%221.0%22+encoding%3D%22UTF-8%22%3F%3E%3CWorkBook%3E%3CVersion'
                  '%3E6.5%3C%2FVersion%3E%3CReport+class%3D%22com.fr.report.'
                  'WorkSheet%22+name%3D%220%22%3E%3CCellElementList%3E%3C%2FC'
                  'ellElementList%3E%3C%2FReport%3E%3C%2FWorkBook%3E&'
-                 'sessionID={}'.format(self.device, sign_sessionid))
+                 'sessionID={}'.format(self.device, cmd, sign_sessionid))
         response = self.da_session.post(self.host+'?'+param)
-        successp = response.json()[1]['fr_verifyinfo']['success']
-        msg = self.get_err_msg(response, successp)
-        return successp, msg
+        # print(response.json())
+        # successp = response.json()[1]['fr_verifyinfo']['success']
+        msg = response.json()
+        return msg
+
+    def report_again(self, sessionid):
+        param = ('__device__={}&__mobileapp__=true&isMobile=yes&'
+                 'op=closesessionid&sessionID={}'.format(self.device, sessionid))
+        response = self.da_session.post(self.host+'?'+param)
+
+    def sign_again(self):
+        param = ('target=_self&reportlet=2017%252Fkaixue.cpt&op=write&'
+                 '__replaceview__=true')
+        response = self.da_session.post(self.host+'?'+param)
+        print('Sign in Sucess!')
 
     def get_err_msg(self, response, successp):
         if successp is False:
@@ -126,9 +140,12 @@ class data_analysis():
         print('Get Current Time Success!')
         sign_sessionid = da.signin(title, sessionid, hour, minute, second)
         print('Get SignIn SessionID Success!')
-        successp, msg = da.commit(sign_sessionid)
-        print('SignIn Statu: ' + str(successp))
+        msg = da.commit(self.verify_cmd, sign_sessionid)
         print(msg)
+        msg2 = da.commit(self.submit_cmd, sign_sessionid)
+        print(msg2)
+        da.report_again(sign_sessionid)
+        da.sign_again()
         da.close_session(sessionid)
 
     def sign_in_home(self):
@@ -150,5 +167,5 @@ if __name__ == '__main__':
 
     if hour > 21:
         da.sign_in_home()
-
-    da.sign_in_class()
+    else:
+        da.sign_in_class()
