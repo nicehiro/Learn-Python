@@ -4,7 +4,12 @@
 
 import requests
 import datetime
+import time
+import random
 
+
+def delay(delay):
+    time.sleep(delay * 60)
 
 def get_right_time(time):
     if time < 10:
@@ -131,7 +136,7 @@ class data_analysis():
         self.da_session.close()
 
     
-    def sign_in(self, title, sign_in_id):
+    def sign_in(self, title, sign_in_id, signin_type):
         # cookies = self.get_session_cookie(resp)
         # print('Get Cookies Success!')
         sessionid = da.get_sign_session_id(sign_in_id)
@@ -146,19 +151,40 @@ class data_analysis():
         print(msg2)
         da.report_again(sign_sessionid)
         da.sign_again()
+        log = Log(signin_type, msg2)
+        log.write_log()
         da.close_session(sessionid)
 
     def sign_in_home(self):
         print('Sign in Home:')
-        self.sign_in(self.login_home_title, self.sign_in_home_id)
-        f = open('test', 'w')
-        f.write('test sucess')
+        self.sign_in(self.login_home_title, self.sign_in_home_id,
+                    'Sign in Home')
 
     def sign_in_class(self):
         print('Sign in Class:')
-        self.sign_in(self.login_class_title, self.sign_in_class_id)
-        f = open('test', 'w')
-        f.write('test sucess')
+        self.sign_in(self.login_class_title, self.sign_in_class_id,
+                     'Sign in Class')
+
+
+class Log():
+
+    def __init__(self, signin_type, signin_result):
+        self.file_path = '/home/hiro/.signin.log'
+        self.signin_type = signin_type
+        self.signin_result = signin_result
+    
+    def get_time(self):
+        now = datetime.now()
+        return now.strftime('%Y-%m-%d %H:%M:%S')
+
+    def write_log(self):
+        with open(file_path, 'a') as f:
+            f.write(self.get_time())
+            f.write('\n')
+            f.write(self.signin_type)
+            f.write('\n')
+            f.write(self.signin_result)
+            f.write('\n')
 
 
 if __name__ == '__main__':
@@ -166,6 +192,10 @@ if __name__ == '__main__':
     hour, minute, second = get_time()
 
     if hour > 21:
+        rand = random.randint(0, 28)
+        delay(rand)
         da.sign_in_home()
     else:
+        rand = random.randint(0, 10)
+        delay(rand)
         da.sign_in_class()
