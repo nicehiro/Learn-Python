@@ -11,11 +11,13 @@ import random
 def delay(delay):
     time.sleep(delay * 60)
 
+
 def get_right_time(time):
     if time < 10:
         return '0' + str(time)
     else:
         return time
+
 
 def get_time():
     now = datetime.datetime.now()
@@ -28,15 +30,15 @@ def get_time():
 class data_analysis():
 
     __Author__ = 'hiro'
-    
+
     def __init__(self):
         self.da_session = requests.Session()
         self.host = 'http://stu.xinxi.zstu.edu.cn/WebReport/ReportServer'
         self.device = 'android'
-        self.device_name = 'your_device_name'
-        self.password = 'your_password'
-        self.username = 'your_username'
-        self.macaddress = 'your_mac_address'
+        self.device_name = 'OnePlus+ONE+A2001'
+        self.password = '181732'
+        self.username = '2014332860054'
+        self.macaddress = '97F9B86F0663598B9597B87C'
         self.lon = '120.359624'
         self.lat = '30.31706'
         self.login_home_title = ('%25E6%259A%2591%25E6%259C%259F%25E7%25AD'
@@ -49,7 +51,6 @@ class data_analysis():
         self.verify_cmd = 'write_verify'
         self.submit_cmd = 'submit_w_report'
         print('Login Success!')
-        
 
     def login(self):
         login_param = ('__device__={}&__mobileapp__=true&'
@@ -65,7 +66,7 @@ class data_analysis():
                                self.password, self.username,
                                self.macaddress))
 
-        response = self.da_session.post(self.host+'?'+login_param)
+        response = self.da_session.post(self.host + '?' + login_param)
         return response
 
     def get_session_cookie(self, response):
@@ -76,14 +77,14 @@ class data_analysis():
                  'id={}&isMobile=yes&op=fs_main'.format(self.device,
                                                         sign_in_id))
 
-        response = self.da_session.post(self.host+'?'+param)
+        response = self.da_session.post(self.host + '?' + param)
         return response.json()['sessionid']
 
     def signin(self, title, sessionid, hour, minute, second):
         param = ('__device__={}&__mobileapp__=true&isMobile=yes&'
                  'op=closesessionid&sessionID={}'.format(self.device, sessionid))
 
-        response = self.da_session.post(self.host+'?'+param)
+        response = self.da_session.post(self.host + '?' + param)
 
         param2 = ('timetype={}&title={}&time={}%253A{}%253A{}&'
                   'jingdu={}&weidu={}&reportlet=2017%'
@@ -92,7 +93,7 @@ class data_analysis():
                   .format(0, title, hour, minute, second,
                           self.lon, self.lat, self.device))
 
-        response2 = self.da_session.post(self.host+'?'+param2)
+        response2 = self.da_session.post(self.host + '?' + param2)
         return response2.json()['sessionid']
 
     def commit(self, cmd, sign_sessionid):
@@ -103,7 +104,7 @@ class data_analysis():
                  'WorkSheet%22+name%3D%220%22%3E%3CCellElementList%3E%3C%2FC'
                  'ellElementList%3E%3C%2FReport%3E%3C%2FWorkBook%3E&'
                  'sessionID={}'.format(self.device, cmd, sign_sessionid))
-        response = self.da_session.post(self.host+'?'+param)
+        response = self.da_session.post(self.host + '?' + param)
         # print(response.json())
         # successp = response.json()[1]['fr_verifyinfo']['success']
         msg = response.json()
@@ -112,12 +113,12 @@ class data_analysis():
     def report_again(self, sessionid):
         param = ('__device__={}&__mobileapp__=true&isMobile=yes&'
                  'op=closesessionid&sessionID={}'.format(self.device, sessionid))
-        response = self.da_session.post(self.host+'?'+param)
+        response = self.da_session.post(self.host + '?' + param)
 
     def sign_again(self):
         param = ('target=_self&reportlet=2017%252Fkaixue.cpt&op=write&'
                  '__replaceview__=true')
-        response = self.da_session.post(self.host+'?'+param)
+        response = self.da_session.post(self.host + '?' + param)
         print('Sign in Sucess!')
 
     def get_err_msg(self, response, successp):
@@ -132,10 +133,9 @@ class data_analysis():
         param = ('__device__={}&__mobileapp__=true&isMobile=yes&'
                  'op=closesessionid&sessionID={}'.format(self.device, sessionid))
 
-        self.da_session.post(self.host+'?'+param)
+        self.da_session.post(self.host + '?' + param)
         self.da_session.close()
 
-    
     def sign_in(self, title, sign_in_id, signin_type):
         # cookies = self.get_session_cookie(resp)
         # print('Get Cookies Success!')
@@ -158,7 +158,7 @@ class data_analysis():
     def sign_in_home(self):
         print('Sign in Home:')
         self.sign_in(self.login_home_title, self.sign_in_home_id,
-                    'Sign in Home')
+                     'Sign in Home')
 
     def sign_in_class(self):
         print('Sign in Class:')
@@ -172,7 +172,7 @@ class Log():
         self.file_path = '/home/hiro/.signin.log'
         self.signin_type = signin_type
         self.signin_result = signin_result
-    
+
     def get_time(self):
         now = datetime.now()
         return now.strftime('%Y-%m-%d %H:%M:%S')
